@@ -5,7 +5,9 @@ __pycache__/
 
 # Private ledger and generated output stay on this machine.
 data/transactions.db
+data/transactions.db-*
 imports/bank-statements/*
 !imports/bank-statements/.gitkeep
 reports/*
 !reports/.gitkeep
+.pytest_cache/
