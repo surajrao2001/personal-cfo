@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Private ledger and generated output stay on this machine.
+data/transactions.db
+imports/bank-statements/*
+!imports/bank-statements/.gitkeep
+reports/*
+!reports/.gitkeep
