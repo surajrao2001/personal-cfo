@@ -1,7 +1,7 @@
-"""Gmail is not connected.
+"""Gmail mailbox download is not enabled.
 
-Do not read or search a mailbox from this package. A transaction may still
-record source='gmail' when some other importer has already extracted fields.
+Sign in on this computer with ``python3 src/gmail/login.py``. That stores a
+read-only token and does not download mail.
 """
 
 

@@ -2,7 +2,7 @@
 
 Local-first personal finance and investment research agent. There is no UI and no web server. Cursor rules define how the agent behaves. The Finance MCP is the only data interface, and it speaks MCP over standard input and output.
 
-Gmail is not connected. Transactions, categories, and reconciliation notes stay in SQLite on this machine. Profile, accounts, portfolio, SIPs, and goals stay in local JSON files.
+Gmail sign-in is local and read-only. Mail is not downloaded yet. Transactions, categories, and reconciliation notes stay in SQLite on this machine. Profile, accounts, portfolio, SIPs, and goals stay in local JSON files.
 
 ## Run locally
 
@@ -13,6 +13,19 @@ python3 tools/finance-mcp/server.py
 ```
 
 The server process waits for MCP messages on stdin. Cursor launches it from `.cursor/mcp.json`. Do not write logs to stdout.
+
+## Sign in to Gmail
+
+Run this on the same computer where the browser will open:
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 src/gmail/login.py
+```
+
+Approve the Google prompt for read-only Gmail access. Google redirects to `http://localhost` on this computer, and the command saves `src/gmail/token.json`. That file is gitignored. The command does not download mail.
+
+If the browser does not open, copy the printed URL into a browser on this same computer.
 
 Set `PERSONAL_CFO_DATA_DIR` when you want the ledger and JSON files somewhere other than `data/`.
 
@@ -111,7 +124,7 @@ Bank statements dropped in `imports/bank-statements/` and files written under `r
 
 ```text
 src/finance/            normalization, dedup, SQLite ledger, balances
-src/gmail/              not connected
+src/gmail/              read-only sign-in; mail download is not enabled
 src/reconciliation/     reconciliation metadata only
 src/investments/        read-only portfolio and SIPs
 src/reports/            cash-flow and rate calculations
