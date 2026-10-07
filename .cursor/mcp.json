@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "finance": {
+      "command": "python3",
+      "args": ["tools/finance-mcp/server.py"]
+    }
+  }
+}

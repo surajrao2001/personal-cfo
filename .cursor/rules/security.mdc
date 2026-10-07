@@ -1,0 +1,56 @@
+---
+description: Personal financial security requirements
+alwaysApply: true
+---
+
+# Security Requirements
+
+This project contains extremely sensitive personal financial information.
+
+Never commit:
+
+- .env
+- OAuth tokens
+- Gmail credentials
+- refresh tokens
+- bank statements
+- transaction databases
+- portfolio data
+- personal financial reports
+
+Never request:
+
+- UPI PIN
+- bank password
+- card CVV
+- OTP
+- trading password
+
+Use read-only access wherever possible.
+
+Financial MCP tools should be divided into:
+
+READ:
+- transactions
+- balances
+- investments
+- portfolio
+- reports
+- market information
+
+WRITE:
+- local categorization
+- local reports
+- reconciliation metadata
+
+HIGH RISK:
+- money transfers
+- trading
+- SIP changes
+- withdrawals
+- payments
+
+HIGH-RISK operations must require explicit user confirmation.
+
+Do not expose full account numbers in reports.
+Mask sensitive identifiers.

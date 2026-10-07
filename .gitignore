@@ -1,0 +1,17 @@
+.env
+.venv/
+
+# Gmail OAuth client secrets and tokens stay on this machine.
+src/gmail/credentials.json
+src/gmail/token.json
+__pycache__/
+*.pyc
+
+# Private ledger and generated output stay on this machine.
+data/transactions.db
+data/transactions.db-*
+imports/bank-statements/*
+!imports/bank-statements/.gitkeep
+reports/*
+!reports/.gitkeep
+.pytest_cache/
