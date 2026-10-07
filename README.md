@@ -12,7 +12,27 @@ python3 -m pytest
 python3 tools/finance-mcp/server.py
 ```
 
-The server process waits for MCP messages on stdin. Cursor launches it from `.cursor/mcp.json`. Do not write logs to stdout.
+The server process waits for MCP messages on stdin. Do not write logs to stdout.
+
+Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspaceFolder}` so the ledger path stays inside this project even when Cursor's working directory is somewhere else:
+
+```json
+{
+  "mcpServers": {
+    "finance": {
+      "command": "python3",
+      "args": ["${workspaceFolder}/tools/finance-mcp/server.py"],
+      "env": {
+        "PERSONAL_CFO_DATA_DIR": "${workspaceFolder}/data"
+      }
+    }
+  }
+}
+```
+
+In the Cursor desktop app, open this folder and enable the `finance` server under Settings → MCP. Reload the window if the tools do not appear.
+
+Cloud Agents do not read this file on their own. On [cursor.com/agents](https://cursor.com/agents), open the MCP menu and add the same stdio server: command `python3`, args `${workspaceFolder}/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=${workspaceFolder}/data`. The agent VM needs `python3 -m pip install -r requirements.txt` before the first tool call.
 
 ## Sign in to Gmail
 
