@@ -31,7 +31,15 @@ Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspace
 }
 ```
 
-This file is on `cursor/finance-mcp-setup-a4ca`. Check out that branch, open the folder in Cursor desktop, then quit Cursor completely and open it again. The `finance` server is listed under Customize → MCPs for that folder.
+Customize → MCPs opens on your user account, so this project file stays off that list until you tick the `personal-cfo` folder in the scope dropdown at the top left. If the folder is missing, click "N more".
+
+To put `finance` on the user list that is already open, check out `cursor/finance-mcp-setup-a4ca` and run:
+
+```bash
+python3 tools/finance-mcp/install_cursor_mcp.py
+```
+
+Quit Cursor completely and open it again. `finance` is then listed under your user account in Customize → MCPs. The command keeps every other server already in `~/.cursor/mcp.json`.
 
 Cloud Agents do not read this file on their own. On [cursor.com/agents](https://cursor.com/agents), open the MCP menu and add the same stdio server: command `python3`, args `${workspaceFolder}/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=${workspaceFolder}/data`. The agent VM needs `python3 -m pip install -r requirements.txt` before the first tool call.
 
