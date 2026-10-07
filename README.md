@@ -12,7 +12,35 @@ python3 -m pytest
 python3 tools/finance-mcp/server.py
 ```
 
-The server process waits for MCP messages on stdin. Cursor launches it from `.cursor/mcp.json`. Do not write logs to stdout.
+The server process waits for MCP messages on stdin. Do not write logs to stdout.
+
+Cursor starts that process from `.cursor/mcp.json` when this folder is the open project. `${workspaceFolder}` works only in that project file. In `~/.cursor/mcp.json` Cursor saves it as plain text, and Python then looks for a folder named `${workspaceFolder}` under your home directory.
+
+```json
+{
+  "mcpServers": {
+    "finance": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["${workspaceFolder}/tools/finance-mcp/server.py"],
+      "env": {
+        "PERSONAL_CFO_DATA_DIR": "${workspaceFolder}/data"
+      }
+    }
+  }
+}
+```
+
+The account list in Customize → MCPs reads `~/.cursor/mcp.json` on the computer where the Cursor app is open. From a checkout of `cursor/finance-mcp-setup-a4ca` on that computer, run:
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 tools/finance-mcp/install_cursor_mcp.py
+```
+
+That writes absolute paths for this checkout and installs the `mcp` package into `.venv`. Quit Cursor completely and open it again. Other servers already in `~/.cursor/mcp.json` stay in place.
+
+Cloud Agents read MCP servers added at [cursor.com/agents](https://cursor.com/agents). Use command `/usr/bin/python3`, args `/workspace/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=/workspace/data` after `python3 -m pip install -r requirements.txt` in that VM.
 
 ## Sign in to Gmail
 

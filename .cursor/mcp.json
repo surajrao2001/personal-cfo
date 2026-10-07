@@ -1,8 +1,12 @@
 {
   "mcpServers": {
     "finance": {
+      "type": "stdio",
       "command": "python3",
-      "args": ["tools/finance-mcp/server.py"]
+      "args": ["${workspaceFolder}/tools/finance-mcp/server.py"],
+      "env": {
+        "PERSONAL_CFO_DATA_DIR": "${workspaceFolder}/data"
+      }
     }
   }
 }

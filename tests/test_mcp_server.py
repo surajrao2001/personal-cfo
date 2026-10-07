@@ -2,6 +2,7 @@ import asyncio
 import importlib.util
 import json
 import os
+import sys
 from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters, stdio_client
@@ -39,6 +40,43 @@ FORBIDDEN_TOOLS = {
     "create_payment",
     "send_payment",
 }
+
+
+def test_user_mcp_install_adds_finance_without_removing_other_servers(tmp_path: Path) -> None:
+    spec = importlib.util.spec_from_file_location(
+        "install_cursor_mcp",
+        ROOT / "tools" / "finance-mcp" / "install_cursor_mcp.py",
+    )
+    assert spec is not None and spec.loader is not None
+    installer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(installer)
+
+    destination = tmp_path / ".cursor" / "mcp.json"
+    destination.parent.mkdir()
+    destination.write_text(
+        json.dumps({"mcpServers": {"other": {"command": "echo", "args": ["hi"]}}}),
+        encoding="utf-8",
+    )
+    installer.install(destination, ROOT, sys.executable)
+    saved = json.loads(destination.read_text(encoding="utf-8"))
+    assert saved["mcpServers"]["other"]["command"] == "echo"
+    finance = saved["mcpServers"]["finance"]
+    assert finance["type"] == "stdio"
+    assert finance["command"] == sys.executable
+    assert finance["args"] == [str(ROOT / "tools" / "finance-mcp" / "server.py")]
+    assert "${workspaceFolder}" not in finance["args"][0]
+    assert finance["env"]["PERSONAL_CFO_DATA_DIR"] == str(ROOT / "data")
+    assert "${workspaceFolder}" not in finance["env"]["PERSONAL_CFO_DATA_DIR"]
+
+
+def test_cursor_mcp_config_points_at_the_local_server() -> None:
+    config = json.loads((ROOT / ".cursor" / "mcp.json").read_text(encoding="utf-8"))
+    finance = config["mcpServers"]["finance"]
+    assert finance["type"] == "stdio"
+    assert finance["command"] == "python3"
+    assert finance["args"] == ["${workspaceFolder}/tools/finance-mcp/server.py"]
+    assert finance["env"]["PERSONAL_CFO_DATA_DIR"] == "${workspaceFolder}/data"
+    assert (ROOT / "tools" / "finance-mcp" / "server.py").is_file()
 
 
 def _load_server():
