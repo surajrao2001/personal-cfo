@@ -1,5 +1,8 @@
 .env
 .venv/
+
+# Gmail OAuth client secrets stay on this machine.
+src/gmail/credentials.json
 __pycache__/
 *.pyc
 
