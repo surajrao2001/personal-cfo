@@ -1,6 +1,113 @@
 ---
-description: Placeholder for financial data rules
-alwaysApply: false
+description: Financial data ingestion and reconciliation rules
+alwaysApply: true
 ---
 
-Rules for this file will be added separately.
+# Financial Data Rules
+
+The Finance MCP is the primary interface for financial data.
+
+## Data sources
+
+Financial data may come from:
+
+1. Gmail transaction notifications
+2. Bank statements
+3. Investment data
+4. User-provided temporary information
+
+## Source priority
+
+For transaction accuracy:
+
+Bank statement > normalized ledger > Gmail notification > user estimate.
+
+Gmail is an automated transaction feed.
+
+Bank statements are used for reconciliation and should be treated as the authoritative transaction source when available.
+
+## Gmail processing
+
+Only process emails relevant to financial transactions.
+
+Do not ingest the user's entire mailbox.
+
+Use targeted Gmail searches based on:
+
+- sender
+- subject
+- transaction keywords
+- date range
+
+Extract only information required for financial tracking.
+
+Typical fields:
+
+- date
+- amount
+- debit/credit
+- merchant
+- account
+- transaction/reference ID
+- payment method
+- description
+
+## Deduplication
+
+Never create duplicate transactions.
+
+Use transaction IDs/reference numbers where available.
+
+If unavailable, use a combination of:
+
+- date
+- amount
+- account
+- merchant
+- description
+
+Flag uncertain duplicates rather than silently creating duplicates.
+
+## Categorization
+
+Categorize transactions conservatively.
+
+Possible categories:
+
+- Housing
+- Food
+- Groceries
+- Transport
+- Utilities
+- Shopping
+- Entertainment
+- Travel
+- Health
+- Education
+- Insurance
+- Debt
+- Investments
+- Transfers
+- Salary
+- Other
+
+If confidence is low, mark the transaction as uncertain.
+
+Do not invent merchant information.
+
+## Reconciliation
+
+When a bank statement is provided:
+
+1. Parse the statement.
+2. Normalize transactions.
+3. Match against the existing ledger.
+4. Identify duplicates.
+5. Identify missing transactions.
+6. Identify amount mismatches.
+7. Identify date mismatches.
+8. Identify unexplained transactions.
+9. Report discrepancies.
+10. Only modify the ledger after reconciliation logic is satisfied.
+
+Never silently overwrite financial records.
