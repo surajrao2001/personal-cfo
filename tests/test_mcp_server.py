@@ -44,6 +44,7 @@ FORBIDDEN_TOOLS = {
 def test_cursor_mcp_config_points_at_the_local_server() -> None:
     config = json.loads((ROOT / ".cursor" / "mcp.json").read_text(encoding="utf-8"))
     finance = config["mcpServers"]["finance"]
+    assert finance["type"] == "stdio"
     assert finance["command"] == "python3"
     assert finance["args"] == ["${workspaceFolder}/tools/finance-mcp/server.py"]
     assert finance["env"]["PERSONAL_CFO_DATA_DIR"] == "${workspaceFolder}/data"

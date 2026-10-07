@@ -20,6 +20,7 @@ Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspace
 {
   "mcpServers": {
     "finance": {
+      "type": "stdio",
       "command": "python3",
       "args": ["${workspaceFolder}/tools/finance-mcp/server.py"],
       "env": {
@@ -30,7 +31,7 @@ Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspace
 }
 ```
 
-In the Cursor desktop app, open this folder and enable the `finance` server under Settings → MCP. Reload the window if the tools do not appear.
+`main` does not contain this file. In Cursor desktop, open the folder after checking out `cursor/finance-mcp-setup-a4ca`. Then quit Cursor completely and open it again. The `finance` server is listed under Customize → MCPs for that folder. A window reload is not enough, and the list stays empty while `main` is the open branch.
 
 Cloud Agents do not read this file on their own. On [cursor.com/agents](https://cursor.com/agents), open the MCP menu and add the same stdio server: command `python3`, args `${workspaceFolder}/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=${workspaceFolder}/data`. The agent VM needs `python3 -m pip install -r requirements.txt` before the first tool call.
 
