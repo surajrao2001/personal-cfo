@@ -1,12 +1,12 @@
 """Register the Finance MCP in the user config Cursor lists by default.
 
-Customize → MCPs opens on the user account. A project file at
-.cursor/mcp.json stays hidden until that folder is ticked in the scope
-dropdown. This writes the same server into ~/.cursor/mcp.json, which is
-the list on screen, and leaves every other server untouched.
+The account list reads ~/.cursor/mcp.json on the computer where Cursor is
+open. ${workspaceFolder} is left as plain text in that file, so this writes
+absolute paths and leaves every other server untouched.
 """
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -17,13 +17,31 @@ def user_mcp_path() -> Path:
     return Path.home() / ".cursor" / "mcp.json"
 
 
+def venv_python(root: Path) -> Path:
+    if sys.platform == "win32":
+        return root / ".venv" / "Scripts" / "python.exe"
+    return root / ".venv" / "bin" / "python"
+
+
 def finance_entry(root: Path, command: str) -> dict:
+    server = root / "tools" / "finance-mcp" / "server.py"
     return {
         "type": "stdio",
         "command": command,
-        "args": [str(root / "tools" / "finance-mcp" / "server.py")],
+        "args": [str(server)],
         "env": {"PERSONAL_CFO_DATA_DIR": str(root / "data")},
     }
+
+
+def ensure_local_python(root: Path) -> str:
+    """Create a project virtualenv and install the MCP package into it."""
+    python = venv_python(root)
+    if not python.exists():
+        subprocess.check_call([sys.executable, "-m", "venv", str(root / ".venv")])
+    subprocess.check_call(
+        [str(python), "-m", "pip", "install", "-r", str(root / "requirements.txt")]
+    )
+    return str(python)
 
 
 def load_config(path: Path) -> dict:
@@ -55,9 +73,15 @@ def install(path: Path, root: Path, command: str) -> Path:
 
 
 def main() -> None:
-    destination = install(user_mcp_path(), ROOT, sys.executable)
+    server = ROOT / "tools" / "finance-mcp" / "server.py"
+    if not server.is_file():
+        raise SystemExit(f"Missing {server}. Run this inside the personal-cfo checkout.")
+    command = ensure_local_python(ROOT)
+    destination = install(user_mcp_path(), ROOT, command)
     print(f"Wrote the finance server to {destination}")
-    print("Quit Cursor completely, then open Customize → MCPs. finance is listed on your user account.")
+    print(f"Python: {command}")
+    print(f"Server: {server}")
+    print("Quit Cursor completely, then open Customize → MCPs.")
 
 
 if __name__ == "__main__":

@@ -64,7 +64,9 @@ def test_user_mcp_install_adds_finance_without_removing_other_servers(tmp_path: 
     assert finance["type"] == "stdio"
     assert finance["command"] == sys.executable
     assert finance["args"] == [str(ROOT / "tools" / "finance-mcp" / "server.py")]
+    assert "${workspaceFolder}" not in finance["args"][0]
     assert finance["env"]["PERSONAL_CFO_DATA_DIR"] == str(ROOT / "data")
+    assert "${workspaceFolder}" not in finance["env"]["PERSONAL_CFO_DATA_DIR"]
 
 
 def test_cursor_mcp_config_points_at_the_local_server() -> None:

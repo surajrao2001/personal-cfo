@@ -14,7 +14,7 @@ python3 tools/finance-mcp/server.py
 
 The server process waits for MCP messages on stdin. Do not write logs to stdout.
 
-Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspaceFolder}` so the ledger path stays inside this project even when Cursor's working directory is somewhere else:
+Cursor starts that process from `.cursor/mcp.json` when this folder is the open project. `${workspaceFolder}` works only in that project file. In `~/.cursor/mcp.json` Cursor saves it as plain text, and Python then looks for a folder named `${workspaceFolder}` under your home directory.
 
 ```json
 {
@@ -31,17 +31,16 @@ Cursor starts that process from `.cursor/mcp.json`. The config uses `${workspace
 }
 ```
 
-Customize → MCPs opens on your user account, so this project file stays off that list until you tick the `personal-cfo` folder in the scope dropdown at the top left. If the folder is missing, click "N more".
-
-To put `finance` on the user list that is already open, check out `cursor/finance-mcp-setup-a4ca` and run:
+The account list in Customize → MCPs reads `~/.cursor/mcp.json` on the computer where the Cursor app is open. From a checkout of `cursor/finance-mcp-setup-a4ca` on that computer, run:
 
 ```bash
+python3 -m pip install -r requirements.txt
 python3 tools/finance-mcp/install_cursor_mcp.py
 ```
 
-Quit Cursor completely and open it again. `finance` is then listed under your user account in Customize → MCPs. The command keeps every other server already in `~/.cursor/mcp.json`.
+That writes absolute paths for this checkout and installs the `mcp` package into `.venv`. Quit Cursor completely and open it again. Other servers already in `~/.cursor/mcp.json` stay in place.
 
-Cloud Agents do not read this file on their own. On [cursor.com/agents](https://cursor.com/agents), open the MCP menu and add the same stdio server: command `python3`, args `${workspaceFolder}/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=${workspaceFolder}/data`. The agent VM needs `python3 -m pip install -r requirements.txt` before the first tool call.
+Cloud Agents read MCP servers added at [cursor.com/agents](https://cursor.com/agents). Use command `/usr/bin/python3`, args `/workspace/tools/finance-mcp/server.py`, and env `PERSONAL_CFO_DATA_DIR=/workspace/data` after `python3 -m pip install -r requirements.txt` in that VM.
 
 ## Sign in to Gmail
 
